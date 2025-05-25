@@ -1,17 +1,29 @@
-const express = require('express');
-const cors = require('cors');
 
-const app = express();
-const PORT = 3000;
+const fetch = require('node-fetch');
 
-app.use(cors({ origin: '*' }));
-app.use(express.json());
+export default async function handler(req, res) {
+    // CORS para permitir chamadas do front-end
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-app.post('/criar-venda', async (req, res) => {
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end(); // responde ao preflight
+    }
+
+    if (req.method === 'GET') {
+        return res.status(200).json({ message: '✅ API online e pronta!' });
+    }
+
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Método não permitido' });
+    }
+
     const publicKey = 'pk_4tMiRh4m3KriLpTGGtmE-zb9bLbNX5lJ6wNpVdMEMmX6m1Xy';
     const secretKey = 'sk_AwTOzgllckqhjiOAoEyeCYnjGmTkmg2l7fScCJ_4wUER4RAQ';
     const auth = 'Basic ' + Buffer.from(publicKey + ':' + secretKey).toString('base64');
 
+    // Aqui você mantém os dados vindos do front-end intactos:
     const payload = {
         paymentMethod: 'pix',
         amount: req.body.amount || 8500,
@@ -48,7 +60,7 @@ app.post('/criar-venda', async (req, res) => {
         }
 
         console.log('✅ Resposta da ZazzyPay:', data);
-        res.json(data);
+        res.status(200).json(data);
     } catch (error) {
         console.error('❌ Erro na requisição:', error);
         res.status(500).json({
@@ -56,8 +68,4 @@ app.post('/criar-venda', async (req, res) => {
             details: error.message
         });
     }
-});
-
-app.listen(PORT, () => {
-    console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
-});
+}
