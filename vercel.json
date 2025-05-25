@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "server/criar-venda.js", "use": "@vercel/node" }
+  ]
+}
