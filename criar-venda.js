@@ -25,21 +25,11 @@ export default async function handler(req, res) {
 
     // Aqui você mantém os dados vindos do front-end intactos:
     const payload = {
-        paymentMethod: 'pix',
-        amount: req.body.amount || 8500,
-        items: req.body.items || [{
-            title: 'pagamento pix',
-            unitPrice: req.body.amount || 8500,
-            quantity: 1,
-            tangible: false
-        }],
-        customer: req.body.customer || {
-            document: { type: 'cpf', number: cpfData?.cpf },
-            name: cpfData?.nome,
-            phone: '1199999999',
-            email: 'joao@gmail.com'
-        }
-    };
+    paymentMethod: 'pix',
+    amount: req.body.amount,
+    items: req.body.items,
+    customer: req.body.customer
+};
 
     try {
         const response = await fetch('https://api.zazzipay.com/v1/transactions', {
